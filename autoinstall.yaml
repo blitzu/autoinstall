@@ -1,15 +1,15 @@
-#cloud-config
+---
 autoinstall:
   version: 1
   identity:
     hostname: ""
     username: gts
-    password: "$6$rounds=4096$VsekrBjy9ONhBLHd$X7a.Q9Fw02ZHw2bzwXukB3rOC6lUwv.JjcAc8pFM9UE9DnIWWUzZtJKOy.l22w9pr7H6qsWng5E2/n2foKCdZ/"
+    password: $6$rounds=4096$VsekrBjy9ONhBLHd$X7a.Q9Fw02ZHw2bzwXukB3rOC6lUwv.JjcAc8pFM9UE9DnIWWUzZtJKOy.l22w9pr7H6qsWng5E2/n2foKCdZ/
   keyboard:
-    layout: "us"
-    variant: "us"
-  locale: "en_US.UTF-8"
-  timezone: "Europe/Bucharest"
+    layout: us
+    variant: us
+  locale: en_US.UTF-8
+  timezone: Europe/Bucharest
   storage:
     layout:
       name: direct
@@ -50,8 +50,9 @@ autoinstall:
         wipe: false
   user-data:
     interactive-commands:
-      - read -p "Enter hostname: " hostname
+      - read -p "Enter hostname:" hostname
       - echo "$hostname" > /etc/hostname
   late-commands:
     - curtin in-target --target=/target apt-get update
-    - curtin in-target --target=/target apt-get install -y openssh-server traceroute
+    - curtin in-target --target=/target apt-get install -y openssh-server
+      traceroute
