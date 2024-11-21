@@ -1,0 +1,57 @@
+#cloud-config
+autoinstall:
+  version: 1
+  identity:
+    hostname: ""
+    username: gts
+    password: "$6$rounds=4096$VsekrBjy9ONhBLHd$X7a.Q9Fw02ZHw2bzwXukB3rOC6lUwv.JjcAc8pFM9UE9DnIWWUzZtJKOy.l22w9pr7H6qsWng5E2/n2foKCdZ/"
+  keyboard:
+    layout: "us"
+    variant: "us"
+  locale: "en_US.UTF-8"
+  timezone: "Europe/Bucharest"
+  storage:
+    layout:
+      name: direct
+    config:
+      - id: disk0
+        type: disk
+        match:
+          size: largest
+        wipe: superblock-recursive
+        ptable: gpt
+        preserve: false
+        grub_device: true
+        device: ""
+      - id: disk0-part1
+        type: partition
+        device: disk0
+        size: 512M
+        wipe: superblock
+        preserve: false
+      - id: disk0-part2
+        type: partition
+        device: disk0
+        size: -1
+        wipe: superblock
+        preserve: false
+      - id: disk0-part1-fs
+        type: format
+        fstype: fat32
+        volume: disk0-part1
+      - id: disk0-part2-fs
+        type: format
+        fstype: ext4
+        volume: disk0-part2
+      - id: disk0-part2-mount
+        type: mount
+        path: /
+        device: disk0-part2-fs
+        wipe: false
+  user-data:
+    interactive-commands:
+      - read -p "Enter hostname: " hostname
+      - echo "$hostname" > /etc/hostname
+  late-commands:
+    - curtin in-target --target=/target apt-get update
+    - curtin in-target --target=/target apt-get install -y openssh-server traceroute
